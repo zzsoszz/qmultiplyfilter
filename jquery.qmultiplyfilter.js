@@ -79,7 +79,9 @@
 						if(filteritem==null)
 						{
 							this.filteritemlist.put(itemname);
-						}else{
+						}
+						else
+						{
 							this.filteritemlist.remove();
 						}
 				};
