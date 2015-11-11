@@ -49,59 +49,106 @@
 			};
 		}
 		
-		function FilterItem()
+		function FilterItem(target)
 		{
+			this.type;//single:单选 ,multiple:多选
 			this.name;//String
-			this.values;//Array
+			this.values=[];//Array
+			this.init=function()
+			{
+				target.on("click",".itemval",$.proxy(function(event){
+						if($(event.target).hasClass("itemval"))
+						{
+							var filterItemEle=$(event.target).closest(".filteritem");
+							var type=filterItemEle.data("type");
+							var itemname=filterItemEle.find(".itemname").data("itemname");
+							if($(event.target).hasClass("active"))
+							{
+								$(event.target).removeClass("active");
+							}
+							else
+							{
+								if(type=="single")
+								{
+									filterItemEle.find(".itemval").removeClass("active");;
+								}
+								$(event.target).addClass("active");
+							};
+							var all=filterItemEle.find(".active");
+							var result=all.map(
+								function(){
+									return $(this).data("itemval")+"";
+								}
+							);
+							this.type=type;
+							this.name=itemname;
+							this.values=result.get();
+							setTimeout(function(){
+									$(event.target).trigger("itemchanged");
+							},1);
+						}
+				},this));
+			};
+			this.init();
 		}
 		
 		/*
 		*0.根据已经有的值初始化选项
-		*1.点击一个过滤选项，就修改当前选项的状态,并更新FilterItem
-		*2.添加或者删除选项值
 		*
 		*/
 		function PluginObject(target)
 		{
-				this.filteritemlist=[];
-				this.options;
-				
-				this.refresh=function()
+				var self=this;
+				self.filteritemlist=[];
+				self.options;
+				self.filterSetChanged=function()
 				{
-					
-				}
-				;
-				this.addValue=function(itemname,value)
+					if(self.options.onchanged)
+					{
+						self.options.onchanged.call(self,self.filteritemlist);
+					}
+				};
+				self.init=function(initoptions)
 				{
-						val filteritem=this.filteritemlist.filter(function(){
-								return this.name=itemname
-						});
-						if(filteritem==null)
+					self.options=initoptions;
+					//点击选项事件处理
+					target.find(".filteritem").each(
+						function()
 						{
-							this.filteritemlist.put(itemname);
+							var ele=$(this);
+							var item=new FilterItem(ele);
+							ele.on("itemchanged",function(){
+								self.filterSetChanged();
+							});
+							self.filteritemlist.push(item);
 						}
-						else
-						{
-							this.filteritemlist.remove();
-						}
+					);
 				};
-				this.removeValue=function(itemname,value)
-				{
-						this.filteritemlist.
-				};
-				this.init=function(initoptions)
-				{
-					this.options=initoptions;
-					target.on("click",".itemval",function(event){
-							if($(event.target).hasClass("active"))
-							{
-								$(event.target).addClass("active");
-							}else{
-								$(event.target).removeClass("active");
-							}
-					});
-				};
-				this.init();
 		}
 }
 )(jQuery)
+
+
+/*
+this.addValue=function(itemele,itemname,value)
+{
+		val filteritem=this.filteritemlist.filter(function(){
+				return this.name=itemname
+		});
+		if(filteritem==null)
+		{
+			var filteritem={name:itemname,values:[value]};
+			this.filteritemlist.put(filteritem);
+		}
+		else
+		{
+			 if(filteritem.type="single")
+			 {
+				 filteritem.values.put(value);
+			 }else{
+				 filteritem.values.put(value);
+			 }
+			 //filteritem.values.splice($.inArray(value,filteritem.values),1);
+		}
+};
+*/
