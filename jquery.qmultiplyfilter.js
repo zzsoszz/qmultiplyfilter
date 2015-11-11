@@ -49,11 +49,32 @@
 			};
 		}
 		
+		/*
+		*负责filteritem标签的dom操作处理,以及和filterset交互
+		*/
 		function FilterItem(target)
 		{
+			var self=this;
 			this.type;//single:单选 ,multiple:多选
 			this.name;//String
 			this.values=[];//Array
+			this.setValues=function(newValue)
+			{
+				this.values=newValue;
+				this.freshUI();
+			};
+			this.freshUI=function()
+			{
+				target.find(".itemval").each(
+					function()
+					{
+						if($.inArray($(this).val,self.values))
+						{
+							$(this).addClass("active");
+						}
+					}
+				);
+			};
 			this.init=function()
 			{
 				target.on("click",".itemval",$.proxy(function(event){
@@ -61,7 +82,7 @@
 						{
 							var filterItemEle=$(event.target).closest(".filteritem");
 							var type=filterItemEle.data("type");
-							var itemname=filterItemEle.find(".itemname").data("itemname");
+							var itemname=filterItemEle.data("itemname");
 							if($(event.target).hasClass("active"))
 							{
 								$(event.target).removeClass("active");
@@ -99,18 +120,17 @@
 		function PluginObject(target)
 		{
 				var self=this;
-				self.filteritemlist=[];
+				self.filteritemlmap={};
 				self.options;
 				self.filterSetChanged=function()
 				{
 					if(self.options.onchanged)
 					{
-						self.options.onchanged.call(self,self.filteritemlist);
+						self.options.onchanged.call(self,self.filteritemlmap);
 					}
 				};
-				self.init=function(initoptions)
+				this.bindEvent=function()
 				{
-					self.options=initoptions;
 					//点击选项事件处理
 					target.find(".filteritem").each(
 						function()
@@ -120,9 +140,24 @@
 							ele.on("itemchanged",function(){
 								self.filterSetChanged();
 							});
-							self.filteritemlist.push(item);
+							self.filteritemlmap[item.name]=item;
 						}
 					);
+				};
+				this.loadOldData=function()
+				{
+					$(self.options.val).each(
+						function()
+						{
+							self.filteritemlmap[$(this).name].setValues($(this).values);
+						}
+					);
+				};
+				self.init=function(initoptions)
+				{
+					self.options=initoptions;
+					this.bindEvent();
+					this.loadOldData();
 				};
 		}
 }
@@ -130,6 +165,13 @@
 
 
 /*
+
+var map = {}; // Map map = new HashMap();
+map[key] = value; // map.put(key, value);
+var value = map[key]; // Object value = map.get(key);
+var has = key in map; // boolean has = map.containsKey(key);
+delete map[key]; // map.remove(key); 
+
 this.addValue=function(itemele,itemname,value)
 {
 		val filteritem=this.filteritemlist.filter(function(){
