@@ -58,25 +58,37 @@
 			this.type;//single:单选 ,multiple:多选
 			this.name;//String
 			this.values=[];//Array
+			var itemvalElements=target.find(".itemval");
 			this.setValues=function(newValue)
 			{
+				console.log("setValues");
 				this.values=newValue;
 				this.freshUI();
+				console.log("setValues end");
 			};
 			this.freshUI=function()
 			{
-				target.find(".itemval").each(
+				console.log("freshUI");
+				itemvalElements.each(
 					function()
 					{
-						if($.inArray($(this).val,self.values))
+						if($.inArray($(this).data("itemval")+"",self.values)>-1)
 						{
 							$(this).addClass("active");
+							console.log("active");
 						}
 					}
 				);
+				console.log("freshUI end");
 			};
 			this.init=function()
 			{
+				this.type=target.data("type");
+				this.name=target.data("itemname");
+				
+				
+				
+				
 				target.on("click",".itemval",$.proxy(function(event){
 						if($(event.target).hasClass("itemval"))
 						{
@@ -107,8 +119,14 @@
 							setTimeout(function(){
 									$(event.target).trigger("itemchanged");
 							},1);
+							
+							
 						}
 				},this));
+				
+				
+				
+				
 			};
 			this.init();
 		}
@@ -126,11 +144,17 @@
 				{
 					if(self.options.onchanged)
 					{
-						self.options.onchanged.call(self,self.filteritemlmap);
+						var list=[];
+						for(var key in self.filteritemlmap)
+						{
+							list.push(self.filteritemlmap[key]);
+						}
+						self.options.onchanged.call(self,list);
 					}
 				};
-				this.bindEvent=function()
+				this.createAllFilteritem=function()
 				{
+					console.log("createAllFilteritem");
 					//点击选项事件处理
 					target.find(".filteritem").each(
 						function()
@@ -146,17 +170,19 @@
 				};
 				this.loadOldData=function()
 				{
+					console.log("loadOldData");
 					$(self.options.val).each(
 						function()
 						{
-							self.filteritemlmap[$(this).name].setValues($(this).values);
+							self.filteritemlmap[this.name].setValues(this.values);
 						}
 					);
 				};
 				self.init=function(initoptions)
 				{
+					console.log("init");
 					self.options=initoptions;
-					this.bindEvent();
+					this.createAllFilteritem();
 					this.loadOldData();
 				};
 		}
