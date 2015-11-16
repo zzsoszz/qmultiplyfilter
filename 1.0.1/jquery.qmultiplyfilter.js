@@ -61,25 +61,25 @@
 			var itemvalElements=target.find(".itemval");
 			this.setValues=function(newValue)
 			{
-				console.log("setValues");
+				//console.log("setValues");
 				this.values=newValue;
 				this.freshUI();
-				console.log("setValues end");
+				//console.log("setValues end");
 			};
 			this.freshUI=function()
 			{
-				console.log("freshUI");
+				//console.log("freshUI");
 				itemvalElements.each(
 					function()
 					{
 						if($.inArray($(this).data("itemval")+"",self.values)>-1)
 						{
 							$(this).addClass("active");
-							console.log("active");
+							//console.log("acitve id:"+$(this).attr("id"));
 						}
 					}
 				);
-				console.log("freshUI end");
+				//console.log("freshUI end");
 			};
 			this.init=function()
 			{
@@ -154,7 +154,7 @@
 				};
 				this.createAllFilteritem=function()
 				{
-					console.log("createAllFilteritem");
+					//console.log("createAllFilteritem");
 					//点击选项事件处理
 					target.find(".filteritem").each(
 						function()
@@ -170,7 +170,7 @@
 				};
 				this.loadOldData=function()
 				{
-					console.log("loadOldData");
+					//console.log("loadOldData");
 					$(self.options.val).each(
 						function()
 						{
@@ -180,7 +180,7 @@
 				};
 				self.init=function(initoptions)
 				{
-					console.log("init");
+					//console.log("init");
 					self.options=initoptions;
 					this.createAllFilteritem();
 					this.loadOldData();
