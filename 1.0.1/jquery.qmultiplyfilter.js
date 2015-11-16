@@ -191,32 +191,10 @@
 
 
 /*
-
+模拟hashmap操作
 var map = {}; // Map map = new HashMap();
 map[key] = value; // map.put(key, value);
 var value = map[key]; // Object value = map.get(key);
 var has = key in map; // boolean has = map.containsKey(key);
 delete map[key]; // map.remove(key); 
-
-this.addValue=function(itemele,itemname,value)
-{
-		val filteritem=this.filteritemlist.filter(function(){
-				return this.name=itemname
-		});
-		if(filteritem==null)
-		{
-			var filteritem={name:itemname,values:[value]};
-			this.filteritemlist.put(filteritem);
-		}
-		else
-		{
-			 if(filteritem.type="single")
-			 {
-				 filteritem.values.put(value);
-			 }else{
-				 filteritem.values.put(value);
-			 }
-			 //filteritem.values.splice($.inArray(value,filteritem.values),1);
-		}
-};
 */
